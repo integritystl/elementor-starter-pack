@@ -3,7 +3,7 @@
         <div class="file-scanning">
             <div class="sui-header">
                 <h1 class="sui-header-title">
-                    {{__("File Scanning")}}
+                    {{__("Malware Scanning")}}
                 </h1>
                  <doc-link link="https://premium.wpmudev.org/docs/wpmu-dev-plugins/defender/#security-scans"></doc-link>
             </div>

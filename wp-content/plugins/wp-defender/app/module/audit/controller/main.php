@@ -342,7 +342,7 @@ class Main extends \WP_Defender\Controller {
 			wp_enqueue_script( 'defender-audit' );
 			wp_enqueue_script( 'wpmudev-sui' );
 			wp_enqueue_script( 'audit-momentjs', wp_defender()->getPluginUrl() . 'assets/js/vendor/moment/moment.min.js' );
-			wp_enqueue_style( 'audit-daterangepicker', wp_defender()->getPluginUrl() . 'assets/js/vendor/daterangepicker/daterangepicker.css' );
+//			wp_enqueue_style( 'audit-daterangepicker', wp_defender()->getPluginUrl() . 'assets/js/vendor/daterangepicker/daterangepicker.css' );
 			wp_enqueue_script( 'audit-daterangepicker', wp_defender()->getPluginUrl() . 'assets/js/vendor/daterangepicker/daterangepicker.js' );
 		}
 	}

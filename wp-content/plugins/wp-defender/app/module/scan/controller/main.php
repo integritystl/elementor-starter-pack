@@ -126,7 +126,7 @@ class Main extends \WP_Defender\Controller {
 	 */
 	public function adminMenu() {
 		$cap = is_multisite() ? 'manage_network_options' : 'manage_options';
-		add_submenu_page( 'wp-defender', esc_html__( "File Scanning", wp_defender()->domain ), esc_html__( "File Scanning", wp_defender()->domain ), $cap, $this->slug, array(
+		add_submenu_page( 'wp-defender', esc_html__( "Malware Scanning", wp_defender()->domain ), esc_html__( "Malware Scanning", wp_defender()->domain ), $cap, $this->slug, array(
 			&$this,
 			'actionIndex'
 		) );

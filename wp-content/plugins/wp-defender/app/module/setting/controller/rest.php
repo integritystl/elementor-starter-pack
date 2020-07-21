@@ -10,6 +10,7 @@ use Hammer\Helper\HTTP_Helper;
 use WP_Defender\Behavior\Utils;
 use WP_Defender\Controller;
 use WP_Defender\Module\Setting;
+use WP_Defender\Module\Two_Factor\Model\Auth_Settings;
 
 class Rest extends Controller {
 	public function __construct() {
@@ -49,8 +50,9 @@ class Rest extends Controller {
 		}
 		$hardener_settings->delete();
 		\WP_Defender\Module\IP_Lockout\Model\Settings::instance()->delete();
-		\WP_Defender\Module\Advanced_Tools\Model\Auth_Settings::instance()->delete();
+		Auth_Settings::instance()->delete();
 		\WP_Defender\Module\Advanced_Tools\Model\Mask_Settings::instance()->delete();
+		\WP_Defender\Module\Advanced_Tools\Model\Security_Headers_Settings::instance()->delete();
 		\WP_Defender\Module\Setting\Model\Settings::instance()->delete();
 
 		//Disabled  Blacklist Monitor

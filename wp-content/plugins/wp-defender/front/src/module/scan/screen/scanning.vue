@@ -3,7 +3,7 @@
 		<div class="file-scanning">
 			<div class="sui-header">
 				<h1 class="sui-header-title">
-					{{__("File Scanning")}}
+					{{__("Malware Scanning")}}
 				</h1>
 				<div class="sui-actions-left">
 					<button type="button" class="sui-button sui-button-blue">
@@ -12,11 +12,15 @@
 				</div>
 				<doc-link link="https://premium.wpmudev.org/docs/wpmu-dev-plugins/defender/"></doc-link>
 			</div>
-			<div class="sui-dialog" aria-hidden="true" tabindex="-1" id="scanning-dialog">
-				<div class="sui-dialog-overlay"></div>
+			<div class="sui-modal sui-modal-lg">
 
-				<div class="sui-dialog-content" aria-labelledby="scanning-dialog" aria-describedby="scanning"
-				     role="dialog">
+				<div
+						role="dialog"
+						id="scanning-dialog"
+						class="sui-modal-content"
+						aria-modal="true"
+						aria-labelledby="Scanning dialog"
+				>
 					<div class="sui-box" role="document">
 						<div class="sui-box-header">
 							<h3 class="sui-box-title">
@@ -40,7 +44,7 @@
 									</div>
 								</div>
 								<button @click="cancelScan" type="button" :disabled="state.canceling"
-								        class="sui-button-icon sui-tooltip" data-tooltip="Cancel">
+										class="sui-button-icon sui-tooltip" data-tooltip="Cancel">
 									<i class="sui-icon-close" aria-hidden="true"></i>
 								</button>
 							</div>
@@ -49,13 +53,13 @@
 							</div>
 							<div v-if="is_free===1" class="sui-box-settings-row sui-upsell-row">
 								<img class="sui-image sui-upsell-image"
-								     :src="assetUrl('assets/img/scanning-upsell.svg')"
+									 :src="assetUrl('assets/img/scanning-upsell.svg')"
 								>
 								<div class="sui-upsell-notice">
 									<p>{{__("Did you know the Pro version of Defender comes with advanced full code scanning and automated reporting? Get enhanced security protection as part of a WPMU DEV membership with 24/7 support and lots of handy site management tools.")}}
 										<br/><a target='_blank'
-										        :href="campaign_url('defender_filescanning_modal_inprogress_upsell_link')"
-										        class="sui-button-purple sui-button premium-button">{{__("Try Pro Free Today")}}</a>
+												:href="campaign_url('defender_filescanning_modal_inprogress_upsell_link')"
+												class="sui-button-purple sui-button premium-button">{{__("Try Pro Free Today")}}</a>
 									</p>
 								</div>
 							</div>
@@ -90,25 +94,11 @@
 			}
 		},
 		mounted: function () {
-			if (this.$root.store.state_changed) {
-				this.$nextTick(() => {
-					var mainEl = jQuery('.sui-wrap');
-					var el = document.getElementById('scanning-dialog');
-					SUI.dialogs['scanning-dialog'] = new A11yDialog(el, mainEl);
-					SUI.dialogs['scanning-dialog'].show();
-					this.polling();
-				})
-			} else {
-				document.onreadystatechange = () => {
-					if (document.readyState === "complete") {
-						if (SUI.dialogs['scanning-dialog'] !== undefined) {
-							//this is refresh case
-							SUI.dialogs['scanning-dialog'].show();
-							this.polling();
-						}
-					}
-				}
-			}
+			let self = this;
+			this.$nextTick(() => {
+				self.showDialog()
+				self.polling();
+			})
 		},
 		computed: {
 			statusText: function () {
@@ -134,7 +124,7 @@
 						store.updateScan(response.data);
 						self.polling();
 					} else {
-						SUI.dialogs['scanning-dialog'].hide();
+						SUI.closeModal()
 						self.$nextTick(() => {
 							store.updateScan(response.data.scan);
 						})
@@ -143,7 +133,7 @@
 			},
 			polling: function () {
 				if (this.state.canceling === false) {
-					this.polling_state = setTimeout(this.refreshStatus(), 2000)
+					this.polling_state = setTimeout(this.refreshStatus, 2000)
 				}
 			},
 			cancelScan: function () {
@@ -157,11 +147,38 @@
 				clearTimeout(this.polling_state);
 				this.state.canceling = true;
 				this.httpPostRequest('cancelScan', {}, function (response) {
-					SUI.dialogs['scanning-dialog'].hide();
+					SUI.closeModal()
 					self.$nextTick(() => {
 						store.updateScan(response.data.scan);
 					})
 				})
+			},
+			showDialog: function () {
+				const modalId = 'scanning-dialog',
+						focusAfterClosed = jQuery('body'),
+						focusWhenOpen = undefined,
+						hasOverlayMask = false
+				;
+				if (typeof SUI === 'undefined') {
+					document.onreadystatechange = () => {
+						if (document.readyState === "complete") {
+							SUI.openModal(
+									modalId,
+									focusAfterClosed,
+									focusWhenOpen,
+									hasOverlayMask
+							);
+						}
+					}
+				} else {
+					SUI.openModal(
+							modalId,
+							focusAfterClosed,
+							focusWhenOpen,
+							hasOverlayMask
+					);
+				}
+
 			}
 		}
 	}

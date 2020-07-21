@@ -14,7 +14,7 @@ class Plugin_Upgrader_Skin extends \Plugin_Upgrader_Skin {
 	 * @param array $args
 	 */
 	public function __construct( $args = array() ) {
-		$defaults = array( 'url' => '', 'theme' => '', 'nonce' => '', 'title' => esc_html__( 'Update Plugin' ) );
+		$defaults = array( 'url' => '', 'theme' => '', 'nonce' => '', 'title' => esc_html__( 'Update Plugin' ) );	 		 	  	  					 	 	 
 		$args     = wp_parse_args( $args, $defaults );
 
 		$this->plugin = $args['theme'];

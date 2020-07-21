@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Defender Pro
  * Plugin URI: https://premium.wpmudev.org/project/wp-defender/
- * Version:     2.2.8
+ * Version:     2.3
  * Description: Get regular security scans, vulnerability reports, safety recommendations and customized hardening for your site in just a few clicks. Defender is the analyst and enforcer who never sleeps.
  * Author:      WPMU DEV
  * Author URI:  http://premium.wpmudev.org/
@@ -52,12 +52,16 @@ class WP_Defender {
 	/**
 	 * @var string
 	 */
-	public $version = "2.2.8";
+	public $version = "2.2.9";
 
 	/**
 	 * @var string
 	 */
 	public $isFree = 0;
+	/**
+	 * @var bool
+	 */
+	public $is_membership = true;
 	/**
 	 * @var array
 	 */
@@ -67,7 +71,7 @@ class WP_Defender {
 	 */
 	public $plugin_slug = 'wp-defender/wp-defender.php';
 
-	public $db_version = "2.2.1";
+	public $db_version = "2.2.9";
 
 	/**
 	 * @return WP_Defender
@@ -123,13 +127,15 @@ class WP_Defender {
 			'wdf-ip-lockout',
 			'wdf-advanced-tools',
 			'wdf-setting',
-			'wdf-debug'
+			'wdf-debug',
+			'wdf-2fa',
+			'wdf-waf'
 		];
 		$page  = isset( $_GET['page'] ) ? $_GET['page'] : null;
 		if ( ! in_array( $page, $pages, true ) ) {
 			return $classes;
 		}
-		$classes .= ' sui-2-4-1 ';
+		$classes .= ' sui-2-9-2 ';
 
 		return $classes;
 	}
@@ -210,20 +216,21 @@ class WP_Defender {
 		);
 
 		foreach ( $js_files as $slug => $file ) {
-			wp_register_script( $slug, $file, array( 'jquery' ), $this->version, true );
+			wp_register_script( $slug, $file, array( 'jquery', 'clipboard' ), $this->version, true );
 		}
 
 		wp_localize_script( 'def-vue', 'defender', array(
-			'whitelabel'   => \WP_Defender\Behavior\WPMUDEV::instance()->whiteLabelStatus(),
-			'misc'         => [
+			'whitelabel'    => \WP_Defender\Behavior\WPMUDEV::instance()->whiteLabelStatus(),
+			'misc'          => [
 				'high_contrast' => \WP_Defender\Behavior\WPMUDEV::instance()->maybeHighContrast(),
 			],
-			'site_url'     => network_site_url(),
-			'admin_url'    => network_admin_url(),
-			'defender_url' => $this->getPluginUrl(),
-			'is_free'      => $this->isFree,
-			'days_of_week' => \WP_Defender\Behavior\Utils::instance()->getDaysOfWeek(),
-			'times_of_day' => \WP_Defender\Behavior\Utils::instance()->getTimes()
+			'site_url'      => network_site_url(),
+			'admin_url'     => network_admin_url(),
+			'defender_url'  => $this->getPluginUrl(),
+			'is_free'       => $this->isFree,
+			'is_membership' => $this->is_membership,
+			'days_of_week'  => \WP_Defender\Behavior\Utils::instance()->getDaysOfWeek(),
+			'times_of_day'  => \WP_Defender\Behavior\Utils::instance()->getTimes()
 		) );
 		do_action( 'defender_enqueue_assets' );
 	}

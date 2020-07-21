@@ -52,8 +52,15 @@
                             </span>
 						</div>
 						<div class="sui-notice">
+ <div class="sui-notice-content">
+                    <div class="sui-notice-message">
+                        <i class="sui-notice-icon sui-icon-info sui-md" aria-hidden="true"></i>
+
 							<p v-html="user_ip_notice"></p>
-						</div>
+
+                    </div>
+                </div>
+</div>
 					</div>
 				</div>
 				<div class="sui-box-settings-row">
@@ -65,10 +72,19 @@
 					</div>
 					<div class="sui-box-settings-col-2">
 						<div class="sui-notice sui-notice-info margin-bottom-10">
+ <div class="sui-notice-content">
+                    <div class="sui-notice-message">
+                        <i class="sui-notice-icon sui-icon-info sui-md" aria-hidden="true"></i>
+
 							<p v-html="log_status"></p>
-						</div>
-						<button v-show="blacklist.count > 0" type="button" class="sui-button sui-button-gray"
-						        data-a11y-dialog-show="ips-modal">
+
+                    </div>
+                </div>
+</div>
+						<button v-show="blacklist.count > 0" type="button"
+								class="sui-button sui-button-gray"
+								data-modal-open="ips-modal"
+						>
 							{{__("Unlock ips")}}
 						</button>
 					</div>
@@ -80,18 +96,32 @@
 					</div>
 					<div v-if="misc.geo_requirement===false" class="sui-box-settings-col-2">
 						<div class="sui-notice sui-notice-warning">
+ <div class="sui-notice-content">
+                    <div class="sui-notice-message">
+                        <i class="sui-notice-icon sui-icon-info sui-md" aria-hidden="true"></i>
+
 							<p>
 								{{__("This feature requires PHP 5.4 or newer. Please upgrade your PHP version if you wish to use location banning.")}}
 							</p>
-						</div>
+
+                    </div>
+                </div>
+</div>
 					</div>
 					<div v-else class="sui-box-settings-col-2 geo-ip-block">
 						<div v-if="misc.geo_db_downloaded===false">
 							<div class="sui-notice sui-notice-info margin-bottom-10">
+ <div class="sui-notice-content">
+                    <div class="sui-notice-message">
+                        <i class="sui-notice-icon sui-icon-info sui-md" aria-hidden="true"></i>
+
 								<p>
 									{{__("Follow the steps below to activate the Locations feature and download the latest Geo IP Database.")}}
 								</p>
-							</div>
+
+                    </div>
+                </div>
+</div>
 							<div class="sui-border-frame">
 								<div class="download-instruction" v-html="this.geodb_download_instruction"></div>
 								<div class="sui-form-field">
@@ -107,9 +137,9 @@
 								</div>
 								<div class="sui-notice-buttons">
 									<submit-button :disabled="!geo_downloadable" id="download-geodb" type="button"
-									               css-class="sui-button-ghost"
-									               @click="download_geodb"
-									               :state="state">
+										css-class="sui-button-ghost"
+										@click="download_geodb"
+										:state="state">
 										<i class="sui-icon-download" aria-hidden="true"></i>
 										<i class="sui-screen-reader-text">{{__("Download")}}</i>
 										{{__("Download")}}
@@ -120,10 +150,17 @@
 						<div v-else>
 							<div v-if="misc.current_country===false">
 								<div class="sui-notice sui-notice-warning">
+ <div class="sui-notice-content">
+                    <div class="sui-notice-message">
+                        <i class="sui-notice-icon sui-icon-info sui-md" aria-hidden="true"></i>
+
 									<p>
 										{{__("Can't detect current country, it seem your site setup in localhost environment")}}
 									</p>
-								</div>
+
+                    </div>
+                </div>
+</div>
 							</div>
 							<div v-else>
 								<strong>{{__("Blacklist")}}</strong>

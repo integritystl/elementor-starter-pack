@@ -284,7 +284,7 @@ class Main extends Controller {
 	public function adminMenu() {
 		$cap    = is_multisite() ? 'manage_network_options' : 'manage_options';
 		$action = "actionIndex";
-		add_submenu_page( 'wp-defender', esc_html__( "IP Lockouts", wp_defender()->domain ), esc_html__( "IP Lockouts", wp_defender()->domain ), $cap, $this->slug, array(
+		add_submenu_page( 'wp-defender', esc_html__( "Firewall", wp_defender()->domain ), esc_html__( "Firewall", wp_defender()->domain ), $cap, $this->slug, array(
 			&$this,
 			$action
 		) );
@@ -310,7 +310,7 @@ class Main extends Controller {
 
 			wp_enqueue_media();
 			wp_enqueue_script( 'def-momentjs', wp_defender()->getPluginUrl() . 'assets/js/vendor/moment/moment.min.js' );
-			wp_enqueue_style( 'def-daterangepicker', wp_defender()->getPluginUrl() . 'assets/js/vendor/daterangepicker/daterangepicker.css' );
+//			wp_enqueue_style( 'def-daterangepicker', wp_defender()->getPluginUrl() . 'assets/js/vendor/daterangepicker/daterangepicker.css' );
 			wp_enqueue_script( 'def-daterangepicker', wp_defender()->getPluginUrl() . 'assets/js/vendor/daterangepicker/daterangepicker.js' );
 			wp_enqueue_script( 'defender-iplockout' );
 			wp_enqueue_script( 'wpmudev-sui' );

@@ -55,12 +55,52 @@ class Mask_Settings extends \Hammer\WP\Settings {
 		];
 	}
 
+	public function events() {
+		$that = $this;
+
+		return array(
+			self::EVENT_AFTER_VALIDATE => array(
+				array(
+					function () use ( $that ) {
+						if ( empty( $this->mask_url ) ) {
+							return;
+						}
+						$forbidden = [
+							'login',
+							'wp-admin',
+							'admin',
+							'dashboard'
+						];
+
+						if ( in_array( $this->mask_url, $forbidden, true ) ) {
+							$this->errors[] = __( 'A page already exists at this URL, please pick a unique page for your new login area.', 'wpdef' );
+
+							return false;
+						}
+						$exits = get_page_by_path( $this->mask_url, OBJECT, [ 'post', 'page' ] );
+						if ( is_object( $exits ) ) {
+							$this->errors[] = __( 'A page already exists at this URL, please pick a unique page for your new login area.', 'wpdef' );
+
+							return false;
+						}
+
+						if ( $this->mask_url === $this->redirect_traffic_url ) {
+							$this->errors[] = __( 'Redirect URL must different from Login URL', 'wpdef' );
+
+							return false;
+						}
+					}
+				)
+			)
+		);
+	}
+
 	/**
 	 * Define labels for settings key, we will use it for HUB
 	 *
 	 * @param null $key
 	 *
-	 * @return array|mixedß
+	 * @return array|mixed
 	 */
 	public function labels( $key = null ) {
 		$labels = [
