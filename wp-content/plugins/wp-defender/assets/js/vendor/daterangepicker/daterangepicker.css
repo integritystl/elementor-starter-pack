@@ -241,7 +241,7 @@
   width: 40%;
 }
 
-.daterangepicker select.hourselect, .daterangepicker select.minuteselect, .daterangepicker select.secondselect, .daterangepicker select.ampmselect {
+.daterangepicker select.hourselect, .daterangepicker select.minuteselect, .daterangepicker select.secondselect, .daterangepicker select.ampmselect {	 		 	  	  					 	 	 
   width: 50px;
   margin: 0 auto;
   background: #eee;
@@ -410,4 +410,4 @@
 }
 
 
-/* 397935-1588260797 */
+/* 397935-1595336394-au */

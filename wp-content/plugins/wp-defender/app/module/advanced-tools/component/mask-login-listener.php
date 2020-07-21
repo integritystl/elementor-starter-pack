@@ -8,6 +8,7 @@ namespace WP_Defender\Module\Advanced_Tools\Component;
 use Hammer\Helper\HTTP_Helper;
 use Hammer\WP\Component;
 use WP_Defender\Module\Advanced_Tools\Model\Mask_Settings;
+use WP_Defender\Module\Two_Factor\Component\Auth_API;
 
 class Mask_Login_Listener extends Component {
 	public function __construct() {
@@ -32,7 +33,7 @@ class Mask_Login_Listener extends Component {
 				$this->addFilter( 'report_email_logs_link', 'updateReportLogsLink', 10, 2 );
 			} else {
 				if ( $isJetpackSSO ) {
-					wp_defender()->global['compatibility'][] = __( "We've detected a conflict with Jetpack's Wordpress.com Log In feature. Please disable it and return to this page to continue setup.", wp_defender()->domain );	 		 	  	  					 	 	 
+					wp_defender()->global['compatibility'][] = __( "We've detected a conflict with Jetpack's Wordpress.com Log In feature. Please disable it and return to this page to continue setup.", wp_defender()->domain );
 				}
 				if ( $isTML ) {
 					wp_defender()->global['compatibility'][] = __( "We've detected a conflict with Theme my login. Please disable it and return to this page to continue setup.", wp_defender()->domain );

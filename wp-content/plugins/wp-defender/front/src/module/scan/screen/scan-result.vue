@@ -3,7 +3,7 @@
 		<div class="file-scanning">
 			<div class="sui-header">
 				<h1 class="sui-header-title">
-					{{__("FILE SCANNING")}}
+					{{__("Malware Scanning")}}
 				</h1>
 				<div class="sui-actions-left">
 					<submit-button type="button" @click="newScan" css-class="sui-button-blue" :state="state">
@@ -21,7 +21,7 @@
                             <i aria-hidden="true"
                                :class="{'sui-icon-info sui-warning':count_total > 0,'sui-icon-check-tick sui-success':count_total===0}"></i>
                         </span>
-						<span class="sui-summary-sub">{{__("File scanning issues")}}</span>
+						<span class="sui-summary-sub">{{__("Malware scanning issues")}}</span>
 						<span class="sui-summary-detail" v-text="last_scan_date"></span>
 						<span class="sui-summary-sub">{{__("Last scan")}}</span>
 					</div>

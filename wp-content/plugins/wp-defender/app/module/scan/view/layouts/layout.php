@@ -14,7 +14,7 @@ if ( $countAll == 1 ) {
         <div class="wdf-scanning">
             <div class="sui-header">
                 <h1 class="sui-header-title">
-					<?php _e( "File Scanning", wp_defender()->domain ) ?>
+					<?php _e( "Malware Scanning", wp_defender()->domain ) ?>
                 </h1>
                 <div class="sui-actions-left">
                     <form id="start-a-scan" method="post" class="scan-frm">
@@ -54,7 +54,7 @@ if ( $countAll == 1 ) {
                             <i class="sui-icon-check-tick sui-success" aria-hidden="true"></i>
                         </span>
 						<?php endif; ?>
-                        <span class="sui-summary-sub"><?php _e( "File scanning issues", wp_defender()->domain ) ?></span>
+                        <span class="sui-summary-sub"><?php _e( "Malware Scanning issues", wp_defender()->domain ) ?></span>
 
                         <span class="sui-summary-detail"><?php echo $lastScanDate ?></span>
                         <span class="sui-summary-sub"><?php _e( "Last scan", wp_defender()->domain ) ?></span>

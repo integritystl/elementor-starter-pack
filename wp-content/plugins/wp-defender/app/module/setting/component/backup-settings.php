@@ -6,9 +6,9 @@
 namespace WP_Defender\Module\Setting\Component;
 
 use WP_Defender\Behavior\Utils;
-use WP_Defender\Module\Advanced_Tools\Model\Auth_Settings;
 use WP_Defender\Module\Advanced_Tools\Model\Mask_Settings;
 use WP_Defender\Module\Hardener\Model\Settings;
+use WP_Defender\Module\Two_Factor\Model\Auth_Settings;
 
 class Backup_Settings {
 	const KEY = 'defender_last_settings';
@@ -98,7 +98,7 @@ class Backup_Settings {
 				'geoIP_db'
 			] );
 		$advanced_tools  = [
-			'two_factor' => Auth_Settings::instance()->export( [ 'is_conflict' ] ),
+			'two_factor' => \WP_Defender\Module\Two_Factor\Model\Auth_Settings::instance()->export( [ 'is_conflict' ] ),
 			'mask_login' => Mask_Settings::instance()->export( [ 'otps' ] )
 		];
 		$settings        = \WP_Defender\Module\Setting\Model\Settings::instance()->export();
@@ -237,15 +237,17 @@ class Backup_Settings {
 				return Auth_Settings::instance();
 			case 'mask_login':
 				return Mask_Settings::instance();
+			case 'security_headers':
+				return \WP_Defender\Module\Advanced_Tools\Model\Security_Headers_Settings::instance();
 			default:
 				break;
 		}
 	}
 
 	public static function resetSettings() {
-		$tweakFixed = \WP_Defender\Module\Hardener\Model\Settings::instance()->getFixed();
+		$hardener_settings = \WP_Defender\Module\Hardener\Model\Settings::instance();
 
-		foreach ( $tweakFixed as $rule ) {
+		foreach ( $hardener_settings->getFixed() as $rule ) {
 			$rule->getService()->revert();
 		}
 
@@ -259,10 +261,11 @@ class Backup_Settings {
 		if ( class_exists( '\WP_Defender\Module\Audit\Model\Settings' ) ) {
 			\WP_Defender\Module\Audit\Model\Settings::instance()->delete();
 		}
-		\WP_Defender\Module\Hardener\Model\Settings::instance()->delete();
+		$hardener_settings->delete();
 		\WP_Defender\Module\IP_Lockout\Model\Settings::instance()->delete();
-		\WP_Defender\Module\Advanced_Tools\Model\Auth_Settings::instance()->delete();
+		\WP_Defender\Module\Two_Factor\Model\Auth_Settings::instance()->delete();
 		\WP_Defender\Module\Advanced_Tools\Model\Mask_Settings::instance()->delete();
+		\WP_Defender\Module\Advanced_Tools\Model\Security_Headers_Settings::instance()->delete();
 		\WP_Defender\Module\Setting\Model\Settings::instance()->delete();
 		//clear old stuff
 		delete_site_option( 'wp_defender' );

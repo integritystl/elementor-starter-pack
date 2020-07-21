@@ -5,9 +5,11 @@
 
 namespace WP_Defender\Controller;
 
+use Hammer\Base\Container;
 use Hammer\Helper\HTTP_Helper;
 use Hammer\Helper\WP_Helper;
 use WP_Defender\Behavior\Utils;
+use WP_Defender\Behavior\WPMUDEV;
 use WP_Defender\Component\Data_Factory;
 use WP_Defender\Controller;
 use WP_Defender\Module\Audit\Component\Audit_API;
@@ -39,6 +41,7 @@ class Dashboard extends Controller {
 		$module_activation = wp_defender()->isFree ? 'activateModuleFree' : 'activateModule';
 		$this->addAjaxAction( 'wp-defender/v1/activateModule', $module_activation );
 		$this->addAjaxAction( 'wp-defender/v1/skipActivator', 'skipQuickSetup' );
+		$this->addAjaxAction( 'wp-defender/v1/hideFeature', 'hideFeature' );
 		$this->addAction( 'defenderSubmitStats', 'defenderSubmitStats' );
 		$this->addFilter( 'wdp_register_hub_action', 'addMyEndpoint' );
 		add_filter( 'custom_menu_order', '__return_true' );
@@ -71,7 +74,8 @@ class Dashboard extends Controller {
 						$settings->time         = '4:00';
 						$settings->day          = 'monday';
 						$settings->frequency    = 7;
-						$cron_time              = Utils::instance()->reportCronTimestamp( $settings->time, 'scanReportCron' );
+						$cron_time              = Utils::instance()->reportCronTimestamp( $settings->time,
+							'scanReportCron' );
 						wp_schedule_event( $cron_time, 'daily', 'scanReportCron' );
 						$settings->save();
 						//start a new scan
@@ -85,7 +89,8 @@ class Dashboard extends Controller {
 						$settings->time         = '4:00';
 						$settings->day          = 'monday';
 						$settings->frequency    = 7;
-						$cron_time              = Utils::instance()->reportCronTimestamp( $settings->time, 'auditReportCron' );
+						$cron_time              = Utils::instance()->reportCronTimestamp( $settings->time,
+							'auditReportCron' );
 						wp_schedule_event( $cron_time, 'daily', 'auditReportCron' );
 						$activated[] = $item;
 						$settings->save();
@@ -104,14 +109,16 @@ class Dashboard extends Controller {
 						$settings->report_frequency = 7;
 						$settings->report_day       = 'monday';
 						$settings->report_time      = '4:00';
-						$cron_time                  = Utils::instance()->reportCronTimestamp( $settings->report_time, 'lockoutReportCron' );
+						$cron_time                  = Utils::instance()->reportCronTimestamp( $settings->report_time,
+							'lockoutReportCron' );
 						wp_schedule_event( $cron_time, 'daily', 'lockoutReportCron' );
 						$activated[] = $item;
 						$settings->save();
 						break;
 					default:
 						//param not from the button on frontend, log it
-						Utils::instance()->log( sprintf( 'Unexpected value %s from IP %s', $item, Utils::instance()->getUserIp() ) );
+						Utils::instance()->log( sprintf( 'Unexpected value %s from IP %s', $item,
+							Utils::instance()->getUserIp() ) );
 						break;
 				}
 			}
@@ -159,7 +166,8 @@ class Dashboard extends Controller {
 						break;
 					default:
 						//param not from the button on frontend, log it
-						Utils::instance()->log( sprintf( 'Unexpected value %s from IP %s', $item, Utils::instance()->getUserIp() ) );
+						Utils::instance()->log( sprintf( 'Unexpected value %s from IP %s', $item,
+							Utils::instance()->getUserIp() ) );
 						break;
 				}
 			}
@@ -186,6 +194,19 @@ class Dashboard extends Controller {
 		}
 		$is_free = wp_defender()->isFree ? '_free' : null;
 		update_site_option( 'wp_defender' . $is_free . '_is_activated', 1 );
+		wp_send_json_success();
+	}
+
+	public function hideFeature() {
+		if ( ! $this->checkPermission() ) {
+			return;
+		}
+
+		if ( ! wp_verify_nonce( HTTP_Helper::retrieveGet( '_wpnonce' ), 'hideFeature' ) ) {
+			return;
+		}
+
+		delete_site_option( 'waf_show_new_feature' );
 		wp_send_json_success();
 	}
 
@@ -328,7 +349,8 @@ class Dashboard extends Controller {
 		$day          = $params['day'];
 		$time         = $params['time'];
 		$allowed_freq = array( 1, 7, 30 );
-		if ( ! in_array( $frequency, $allowed_freq ) || ! in_array( $day, Utils::instance()->getDaysOfWeek() ) || ! in_array( $time, Utils::instance()->getTimes() ) ) {
+		if ( ! in_array( $frequency, $allowed_freq ) || ! in_array( $day,
+				Utils::instance()->getDaysOfWeek() ) || ! in_array( $time, Utils::instance()->getTimes() ) ) {
 			wp_send_json_error();
 		}
 		$settings            = Settings::instance();
@@ -484,7 +506,7 @@ class Dashboard extends Controller {
 	}
 
 	/**
-	 * @param bool $detail
+	 * @param  bool  $detail
 	 *
 	 * @return array|int|null|string
 	 */
@@ -510,7 +532,9 @@ class Dashboard extends Controller {
 	 */
 	public function admin_menu() {
 		$cap        = is_multisite() ? 'manage_network_options' : 'manage_options';
-		$menu_title = wp_defender()->isFree ? esc_html__( 'Defender', wp_defender()->domain ) : esc_html__( 'Defender Pro', wp_defender()->domain );
+		$menu_title = wp_defender()->isFree ? esc_html__( 'Defender',
+			wp_defender()->domain ) : esc_html__( 'Defender Pro',
+			wp_defender()->domain );
 		add_menu_page(
 			$menu_title,
 			$menu_title,
@@ -531,15 +555,15 @@ class Dashboard extends Controller {
 	private function get_menu_icon() {
 		ob_start();
 		?>
-		<svg width="17px" height="18px" viewBox="10 397 17 18" version="1.1" xmlns="http://www.w3.org/2000/svg"
-			xmlns:xlink="http://www.w3.org/1999/xlink">
-			<!-- Generator: Sketch 3.8.3 (29802) - http://www.bohemiancoding.com/sketch -->
-			<desc>Created with Sketch.</desc>
-			<defs></defs>
-			<path
-					d="M24.8009393,403.7962 L23.7971393,410.1724 C23.7395393,410.5372 23.5313393,410.8528 23.2229393,411.0532 L18.4001393,413.6428 L13.5767393,411.0532 C13.2683393,410.8528 13.0601393,410.5372 13.0019393,410.1724 L11.9993393,403.7962 L11.6153393,401.3566 C12.5321393,402.9514 14.4893393,405.5518 18.4001393,408.082 C22.3115393,405.5518 24.2675393,402.9514 25.1855393,401.3566 L24.8009393,403.7962 Z M26.5985393,398.0644 C25.7435393,397.87 22.6919393,397.2106 19.9571393,397 L19.9571393,403.4374 L18.4037393,404.5558 L16.8431393,403.4374 L16.8431393,397 C14.1077393,397.2106 11.0561393,397.87 10.2011393,398.0644 C10.0685393,398.0938 9.98213933,398.221 10.0031393,398.3536 L10.8875393,403.969 L11.8913393,410.3446 C12.0071393,411.0796 12.4559393,411.7192 13.1105393,412.0798 L16.8431393,414.1402 L18.4001393,415 L19.9571393,414.1402 L23.6891393,412.0798 C24.3431393,411.7192 24.7925393,411.0796 24.9083393,410.3446 L25.9121393,403.969 L26.7965393,398.3536 C26.8175393,398.221 26.7311393,398.0938 26.5985393,398.0644 L26.5985393,398.0644 Z"
-					id="Defender-Icon" stroke="none" fill="#FFFFFF" fill-rule="evenodd"></path>
-		</svg>
+        <svg width="17px" height="18px" viewBox="10 397 17 18" version="1.1" xmlns="http://www.w3.org/2000/svg"
+             xmlns:xlink="http://www.w3.org/1999/xlink">
+            <!-- Generator: Sketch 3.8.3 (29802) - http://www.bohemiancoding.com/sketch -->
+            <desc>Created with Sketch.</desc>
+            <defs></defs>
+            <path
+                    d="M24.8009393,403.7962 L23.7971393,410.1724 C23.7395393,410.5372 23.5313393,410.8528 23.2229393,411.0532 L18.4001393,413.6428 L13.5767393,411.0532 C13.2683393,410.8528 13.0601393,410.5372 13.0019393,410.1724 L11.9993393,403.7962 L11.6153393,401.3566 C12.5321393,402.9514 14.4893393,405.5518 18.4001393,408.082 C22.3115393,405.5518 24.2675393,402.9514 25.1855393,401.3566 L24.8009393,403.7962 Z M26.5985393,398.0644 C25.7435393,397.87 22.6919393,397.2106 19.9571393,397 L19.9571393,403.4374 L18.4037393,404.5558 L16.8431393,403.4374 L16.8431393,397 C14.1077393,397.2106 11.0561393,397.87 10.2011393,398.0644 C10.0685393,398.0938 9.98213933,398.221 10.0031393,398.3536 L10.8875393,403.969 L11.8913393,410.3446 C12.0071393,411.0796 12.4559393,411.7192 13.1105393,412.0798 L16.8431393,414.1402 L18.4001393,415 L19.9571393,414.1402 L23.6891393,412.0798 C24.3431393,411.7192 24.7925393,411.0796 24.9083393,410.3446 L25.9121393,403.969 L26.7965393,398.3536 C26.8175393,398.221 26.7311393,398.0938 26.5985393,398.0644 L26.5985393,398.0644 Z"
+                    id="Defender-Icon" stroke="none" fill="#FFFFFF" fill-rule="evenodd"></path>
+        </svg>
 		<?php
 		$svg = ob_get_clean();
 
@@ -561,13 +585,14 @@ class Dashboard extends Controller {
 		);
 		Utils::instance()->createTranslationJson( 'defender-dashboard' );
 		wp_set_script_translations( 'defender-dashboard', 'wpdef', wp_defender()->getPluginPath() . 'languages' );
+		$waf = Container::instance()->get( 'waf' );
 		wp_localize_script(
 			'defender-dashboard',
 			'dashboard',
 			array_merge(
 				Data_Factory::buildData(),
 				array(
-					'quick_setup' => array(
+					'quick_setup'  => array(
 						'show'      => $this->isShowActivator(),
 						'nonces'    => array(
 							'skip'     => wp_create_nonce( 'skipActivator' ),
@@ -578,6 +603,15 @@ class Dashboard extends Controller {
 							'activate' => 'wp-defender/v1/activateModule',
 						),
 					),
+					'new_features' => [
+						'show'      => $waf->maybe_show_modal(),
+						'nonces'    => array(
+							'hide' => wp_create_nonce( 'hideFeature' ),
+						),
+						'endpoints' => array(
+							'hide' => 'wp-defender/v1/hideFeature',
+						),
+					]
 				)
 			)
 		);

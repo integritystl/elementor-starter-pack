@@ -151,6 +151,8 @@ class Events extends \Hammer\WP\Settings {
 
 	/**
 	 * Submit all the pending to cloud
+	 *
+	 * @return void
 	 */
 	public function sendToApi() {
 		if ( empty( $this->eventsPending ) ) {
@@ -159,8 +161,14 @@ class Events extends \Hammer\WP\Settings {
 		//upload data to cloud first
 		Utils::instance()->log( sprintf( 'Preparing submit %d events to cloud', count( $this->eventsPending ) ) );
 		Audit_API::openSocket();
+		$response = '';
 		if ( Audit_API::socketToAPI( $this->eventsPending ) == false ) {
-			Audit_API::curlToAPI( $this->eventsPending );
+			$response = Audit_API::curlToAPI( $this->eventsPending );
+		}
+		if ( is_wp_error( $response ) ) {
+			Utils::instance()->log( sprintf( 'API sending error: %s', $response->get_error_message() ), 'audit' );
+
+			return;
 		}
 		Utils::instance()->log( sprintf( 'Submitted %d events to cloud', count( $this->eventsPending ) ) );
 		//flushed

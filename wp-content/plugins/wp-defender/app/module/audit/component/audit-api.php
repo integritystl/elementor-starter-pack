@@ -218,9 +218,11 @@ class Audit_API extends Component {
 
 	/**
 	 * @param $data
+	 *
+	 * @return array|mixed|object|\WP_Error
 	 */
 	public static function curlToAPI( $data ) {
-		Utils::instance()->devCall( 'http://' . self::$end_point . '/logs/add_multiple', $data, array(
+		return Utils::instance()->devCall( 'https://' . self::$end_point . '/logs/add_multiple', $data, array(
 			'method'  => 'POST',
 			'timeout' => 3,
 			'headers' => array(
